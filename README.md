@@ -18,3 +18,39 @@ which are short and very useful. Read them!
 While the editor choice is left to you, I would recommend [Sublime Text
 2](http://www.sublimetext.com/2) for it's many and easily installable addons.
 Tutorial on how to set ST2 up comming soon.
+
+# Installation
+
+As is the norm, we will work inside a Python virtualenv. I'd recommend creating
+a new folder named *cocos2d* or something similar, creating the virtualenv
+inside it, installing the needed packages with pip and then cloning the git
+repository.
+
+To do all that on Ubuntu, you need to run the following commands.
+
+Installing the prerequisites:
+
+    sudo apt-get install git python python-setuptools python-pip python-virtualenv
+
+Make a new folder and move to it:
+
+    mkdir cocos2d
+    cd cocos2d
+
+Create the virtualenv:
+
+    virtualenv .
+
+Source the Python virtualenv and install cocos2d with pip:
+
+    source bin/activate
+    pip install cocos2d
+
+Clone the GIT repository from GitHub:
+
+    git clone URL_OF_YOUR_FORK_HERE
+
+Lastly, just run the game with Python:
+
+    cd two-runner
+    python src/main.py
