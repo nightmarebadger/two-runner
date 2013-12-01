@@ -14,50 +14,57 @@ class Game(cocos.layer.ColorLayer):
         self.player.velocity = 0, 0
         self.player.speed = 500
         self.player.gravity = -1300
-        self.add(self.player, z = 0)
+        self.add(self.player, z = 1)
         self.player.do(Move())
         self.player.jumping = False
         self.obstacle = cocos.sprite.Sprite(resources.obstacle)
         self.obstacle.position = 770,30
         self.obstacle.velocity = -100, 0
         self.obstacle.speed = 50
-        self.add(self.obstacle, z = 0)
-        self.obstacle.do(Move())
-
+        self.add(self.obstacle, z = 1)
+        self.obstacle.do(Move())    
 
         self.player.schedule(self.update)
 
+
     def on_key_press(self, symbol, modifiers):
+        vel = list(self.player.velocity)
         if symbol == key.LEFT:
-            self.player.velocity = -self.player.speed/2, self.player.velocity[1]
+            vel[0] -= self.player.speed/2
         elif symbol == key.RIGHT:
-            self.player.velocity = self.player.speed/2, self.player.velocity[1]
+            vel[0] += self.player.speed/2
         elif symbol == key.UP:
             if not self.player.jumping:
-                self.player.velocity = self.player.velocity[0], self.player.speed
+                vel[1] += self.player.speed
                 self.player.jumping = True
         elif symbol == key.DOWN:
-            self.player.velocity = self.player.velocity[0], -self.player.speed
-        elif symbol == key.SPACE:
-           self.player.velocity = 0, 0
+            vel[1] = -self.player.speed
+        
+        self.player.velocity = tuple(vel)
 
     def on_key_release(self, symbol, modifier):
+
+        vel = list(self.player.velocity)
         if symbol == key.LEFT:
-            self.player.velocity = 0, self.player.velocity[1]
-        if symbol == key.RIGHT:
-            self.player.velocity = 0, self.player.velocity[1]
+            vel[0] += self.player.speed/2
+        elif symbol == key.RIGHT:
+            vel[0] -= self.player.speed/2
+
+        self.player.velocity = vel
 
     def update(self, dt):
         if self.player.position[1] <= 25:
             self.player.position = (self.player.position[0], 26)
             self.player.velocity = (self.player.velocity[0], 0)
             self.player.jumping = False
-        elif self.player.position[0] < 25:
+        if self.player.position[0] < 25:
            self.player.position = (26, self.player.position[1])
         elif self.player.position[0] > 775:
             self.player.position = (775, self.player.position[1])
         else:
             pass
+        if self.obstacle.position[0] < 0:
+            self.obstacle.position = 830, 30
 
 class MainMenu(cocos.menu.Menu):
     def __init__(self):
