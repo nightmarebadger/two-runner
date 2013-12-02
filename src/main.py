@@ -2,6 +2,7 @@ from __future__ import division
 from cocos.actions import Move
 from pyglet.window import key
 import cocos
+import cocos.collision_model as cm
 import resources
 
 class Game(cocos.layer.ColorLayer):
@@ -9,6 +10,8 @@ class Game(cocos.layer.ColorLayer):
     def __init__(self):
         super(Game,self).__init__(255,255,255,255)
         
+        self.collision_manager = cm.CollisionManagerBruteForce()
+
         self.player = cocos.sprite.Sprite(resources.mario)
         self.player.position = 25, 25
         self.player.velocity = 0, 0
@@ -17,12 +20,19 @@ class Game(cocos.layer.ColorLayer):
         self.add(self.player, z = 1)
         self.player.do(Move())
         self.player.jumping = False
+
+        self.player.cshape = cm.AARectShape(self.player.position, self.player.width/2, self.player.height/2)
+        self.collision_manager.add(self.player)
+
         self.obstacle = cocos.sprite.Sprite(resources.obstacle)
         self.obstacle.position = 770,30
         self.obstacle.velocity = -100, 0
         self.obstacle.speed = 50
         self.add(self.obstacle, z = 1)
-        self.obstacle.do(Move())    
+        self.obstacle.do(Move())
+
+        self.obstacle.cshape = cm.AARectShape(self.obstacle.position, self.obstacle.width/2, self.obstacle.height/2)
+        self.collision_manager.add(self.obstacle)
 
         self.player.schedule(self.update)
 
@@ -53,6 +63,16 @@ class Game(cocos.layer.ColorLayer):
         self.player.velocity = vel
 
     def update(self, dt):
+        self.player.cshape.center = self.player.position
+        self.obstacle.cshape.center = self.obstacle.position
+        collisions = self.collision_manager.objs_colliding(self.player)
+        if collisions:
+            if self.obstacle in collisions:
+                scene = cocos.scene.Scene()
+                scene.add(cocos.layer.MultiplexLayer(YouLostMenu(), OptionsMenu()), z = 1)
+                scene.add(BackgroundLayer(), z = 0)
+                cocos.director.director.run(scene)
+
         if self.player.position[1] <= 25:
             self.player.position = (self.player.position[0], 26)
             self.player.velocity = (self.player.velocity[0], 0)
@@ -128,8 +148,44 @@ class BackgroundLayer(cocos.layer.Layer):
         self.add(self.image, z = 0)
 
         self.player = cocos.sprite.Sprite(resources.mario)
-        self.player.position = 25, 25
+        self.player.position = 200, 250
         self.add(self.player, z = 1)
+
+class YouLostMenu(cocos.menu.Menu):
+    def __init__(self):
+        super(YouLostMenu, self).__init__("YOU LOST")
+
+        self.font_title["font_name"] = "Edit Undo Line BRK"
+        self.font_title["font_size"] = 52
+        self.font_title["color"] = (240, 0, 220, 255)
+
+        self.font_item["color"] = (255, 255, 255, 255)
+        self.font_item_selected["color"] = (240, 0, 220, 255)
+
+        items = []
+        items.append(cocos.menu.MenuItem("High Scores", self.on_high_scores))
+        items.append(cocos.menu.MenuItem("New Game", self.on_new_game))
+        items.append(cocos.menu.MenuItem("Main Menu", self.on_main_menu))
+        items.append(cocos.menu.MenuItem("Quit", self.on_quit))
+        self.create_menu(items, cocos.menu.shake(), cocos.menu.shake_back())
+
+    def on_high_scores(self):
+        pass
+
+    def on_quit(self):
+        pyglet.app.exit
+
+    def on_new_game(self):
+        scene = cocos.scene.Scene()
+        scene.add(cocos.layer.MultiplexLayer(Game(), OptionsMenu()), z = 1)
+        scene.add(BackgroundLayer(), z = 0)
+        cocos.director.director.run(scene)
+
+    def on_main_menu(self):
+        scene = cocos.scene.Scene()
+        scene.add(cocos.layer.MultiplexLayer(MainMenu(), OptionsMenu()), z = 1)
+        scene.add(BackgroundLayer(), z = 0)
+        cocos.director.director.run(scene)
 
 if __name__ == '__main__':
 
