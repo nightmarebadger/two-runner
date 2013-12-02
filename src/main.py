@@ -21,7 +21,7 @@ class Game(cocos.layer.ColorLayer):
         self.player.do(Move())
         self.player.jumping = False
 
-        self.player.cshape = cm.AARectShape(self.player.position, self.player.width/2, self.player.height/2)
+        self.player.cshape = cm.AARectShape(self.player.position, self.player.width/3, self.player.height/3)
         self.collision_manager.add(self.player)
 
         self.obstacle = cocos.sprite.Sprite(resources.obstacle)
@@ -31,7 +31,7 @@ class Game(cocos.layer.ColorLayer):
         self.add(self.obstacle, z = 1)
         self.obstacle.do(Move())
 
-        self.obstacle.cshape = cm.AARectShape(self.obstacle.position, self.obstacle.width/2, self.obstacle.height/2)
+        self.obstacle.cshape = cm.AARectShape(self.obstacle.position, self.obstacle.width/3, self.obstacle.height/3)
         self.collision_manager.add(self.obstacle)
 
         self.player.schedule(self.update)
