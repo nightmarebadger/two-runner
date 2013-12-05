@@ -1,27 +1,26 @@
 from __future__ import division
+
 from cocos.actions import Move
 from pyglet.window import key
 import cocos
 import cocos.collision_model as cm
+
+import player.py
 import resources
 
 class Game(cocos.layer.ColorLayer):
     is_event_handler = True
     def __init__(self):
         super(Game,self).__init__(255,255,255,255)
+
+        self.player = Player()
         
         self.collision_manager = cm.CollisionManagerBruteForce()
-
-        self.player = cocos.sprite.Sprite(resources.mario)
-        self.player.position = 25, 25
-        self.player.velocity = 0, 0
-        self.player.speed = 500
-        self.player.gravity = -1300
+        
         self.add(self.player, z = 1)
         self.player.do(Move())
         self.player.jumping = False
 
-        self.player.cshape = cm.AARectShape(self.player.position, self.player.width/3, self.player.height/3)
         self.collision_manager.add(self.player)
 
         self.obstacle = cocos.sprite.Sprite(resources.obstacle)
@@ -31,39 +30,12 @@ class Game(cocos.layer.ColorLayer):
         self.add(self.obstacle, z = 1)
         self.obstacle.do(Move())
 
-        self.obstacle.cshape = cm.AARectShape(self.obstacle.position, self.obstacle.width/3, self.obstacle.height/3)
+        self.obstacle.cshape = cm.AARectShape(self.obstacle.position, self.obstacle.width/3, self.obstacle.height/2)
         self.collision_manager.add(self.obstacle)
 
         self.player.schedule(self.update)
 
-
-    def on_key_press(self, symbol, modifiers):
-        vel = list(self.player.velocity)
-        if symbol == key.LEFT:
-            vel[0] -= self.player.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] += self.player.speed/2
-        elif symbol == key.UP:
-            if not self.player.jumping:
-                vel[1] += self.player.speed
-                self.player.jumping = True
-        elif symbol == key.DOWN:
-            vel[1] = -self.player.speed
-        
-        self.player.velocity = tuple(vel)
-
-    def on_key_release(self, symbol, modifier):
-
-        vel = list(self.player.velocity)
-        if symbol == key.LEFT:
-            vel[0] += self.player.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] -= self.player.speed/2
-
-        self.player.velocity = vel
-
     def update(self, dt):
-        self.player.cshape.center = self.player.position
         self.obstacle.cshape.center = self.obstacle.position
         collisions = self.collision_manager.objs_colliding(self.player)
         if collisions:
@@ -73,16 +45,6 @@ class Game(cocos.layer.ColorLayer):
                 scene.add(BackgroundLayer(), z = 0)
                 cocos.director.director.run(scene)
 
-        if self.player.position[1] <= 25:
-            self.player.position = (self.player.position[0], 26)
-            self.player.velocity = (self.player.velocity[0], 0)
-            self.player.jumping = False
-        if self.player.position[0] < 25:
-           self.player.position = (26, self.player.position[1])
-        elif self.player.position[0] > 775:
-            self.player.position = (775, self.player.position[1])
-        else:
-            pass
         if self.obstacle.position[0] < 0:
             self.obstacle.position = 830, 30
 
