@@ -5,7 +5,7 @@ from pyglet.window import key
 import cocos
 import cocos.collision_model as cm
 
-import player.py
+import player
 import resources
 
 class Game(cocos.layer.ColorLayer):
@@ -13,7 +13,7 @@ class Game(cocos.layer.ColorLayer):
     def __init__(self):
         super(Game,self).__init__(255,255,255,255)
 
-        self.player = Player()
+        self.player = player.Player()
         
         self.collision_manager = cm.CollisionManagerBruteForce()
         
@@ -47,6 +47,30 @@ class Game(cocos.layer.ColorLayer):
 
         if self.obstacle.position[0] < 0:
             self.obstacle.position = 830, 30
+
+    def on_key_press(self, symbol, modifiers):
+        vel = list(self.player.velocity)
+        if symbol == key.LEFT:
+            vel[0] -= self.player.speed/2
+        elif symbol == key.RIGHT:
+            vel[0] += self.player.speed/2
+        elif symbol == key.UP:
+            if not self.player.jumping:
+                vel[1] += self.player.speed
+                self.player.jumping = True
+        elif symbol == key.DOWN:
+            vel[1] = -self.player.speed
+        
+        self.player.velocity = tuple(vel)
+
+    def on_key_release(self, symbol, modifier):
+        vel = list(self.player.velocity)
+        if symbol == key.LEFT:
+            vel[0] += self.player.speed/2
+        elif symbol == key.RIGHT:
+            vel[0] -= self.player.speed/2
+
+        self.player.velocity = vel
 
 class MainMenu(cocos.menu.Menu):
     def __init__(self):

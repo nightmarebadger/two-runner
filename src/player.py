@@ -1,37 +1,24 @@
+from __future__ import division
+
+from cocos.actions import Move
+from pyglet.window import key
+import cocos
+import cocos.collision_model as cm
+
+import resources
+
 class Player(cocos.sprite.Sprite):
-	def __init__(self):
-		super(Player, self).__init__(resources.mario)
-	
+    def __init__(self):
+        super(Player, self).__init__(resources.mario)
+    
         self.position = 25, 25
         self.velocity = 0, 0
         self.speed = 500
         self.gravity = -1300
 
-        self.player.cshape = cm.AARectShape(self.player.position, self.player.width/3, self.player.height/2)
+        self.cshape = cm.AARectShape(self.position, self.width/3, self.height/2)
 
-    def on_key_press(self, symbol, modifiers):
-        vel = list(self.velocity)
-        if symbol == key.LEFT:
-            vel[0] -= self.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] += self.speed/2
-        elif symbol == key.UP:
-            if not self.jumping:
-                vel[1] += self.speed
-                self.jumping = True
-        elif symbol == key.DOWN:
-            vel[1] = -self.speed
-        
-        self.velocity = tuple(vel)
-
-    def on_key_release(self, symbol, modifier):
-        vel = list(self.velocity)
-        if symbol == key.LEFT:
-            vel[0] += self.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] -= self.speed/2
-
-        self.velocity = vel
+        self.schedule(self.update)
 
     def update(self, dt):
         self.cshape.center = self.position
@@ -46,5 +33,3 @@ class Player(cocos.sprite.Sprite):
             self.position = (775, self.position[1])
         else:
             pass
-        if self.obstacle.position[0] < 0:
-            self.obstacle.position = 830, 30
