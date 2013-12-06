@@ -4,6 +4,7 @@ from cocos.actions import Move
 from pyglet.window import key
 import cocos
 import cocos.collision_model as cm
+import pyglet
 
 from game import player
 from game import resources
@@ -159,7 +160,7 @@ class YouLostMenu(cocos.menu.Menu):
         pass
 
     def on_quit(self):
-        pyglet.app.exit
+        pyglet.app.exit()
 
     def on_new_game(self):
         scene = cocos.scene.Scene()
