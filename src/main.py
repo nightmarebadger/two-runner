@@ -5,8 +5,8 @@ from pyglet.window import key
 import cocos
 import cocos.collision_model as cm
 
-import player
-import resources
+from game import player
+from game import resources
 
 class Game(cocos.layer.ColorLayer):
     is_event_handler = True
@@ -14,9 +14,9 @@ class Game(cocos.layer.ColorLayer):
         super(Game,self).__init__(255,255,255,255)
 
         self.player = player.Player()
-        
+
         self.collision_manager = cm.CollisionManagerBruteForce()
-        
+
         self.add(self.player, z = 1)
         self.player.do(Move())
         self.player.jumping = False
@@ -60,7 +60,7 @@ class Game(cocos.layer.ColorLayer):
                 self.player.jumping = True
         elif symbol == key.DOWN:
             vel[1] = -self.player.speed
-        
+
         self.player.velocity = tuple(vel)
 
     def on_key_release(self, symbol, modifier):
@@ -180,4 +180,4 @@ if __name__ == '__main__':
     scene.add(cocos.layer.MultiplexLayer(MainMenu(), OptionsMenu()), z = 1)
     scene.add(BackgroundLayer(), z = 0)
     cocos.director.director.run(scene)
-    
+
