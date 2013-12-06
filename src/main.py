@@ -7,7 +7,7 @@ import cocos.collision_model as cm
 import pyglet
 
 from game import player
-from game import resources
+from game.resources import resources
 
 class Game(cocos.layer.ColorLayer):
     is_event_handler = True
