@@ -8,13 +8,23 @@ import cocos.collision_model as cm
 from game.resources import resources
 
 class Player(cocos.sprite.Sprite):
-    def __init__(self):
-        super(Player, self).__init__(resources.mario)
+    def __init__(
+            self,
+            position=(25, 25),
+            velocity=(0, 0),
+            speed=500,
+            gravity= -1300,
+            *args,
+            **kwargs):
 
-        self.position = 25, 25
-        self.velocity = 0, 0
-        self.speed = 500
-        self.gravity = -1300
+        # Push the needed attributes into kwargs
+        kwargs['position'] = position
+
+        super(Player, self).__init__(resources.mario, *args, **kwargs)
+
+        self.speed = speed
+        self.gravity = gravity
+        self.velocity = velocity
 
         self.cshape = cm.AARectShape(self.position, self.width/3, self.height/2)
 
