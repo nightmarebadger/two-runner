@@ -25,7 +25,7 @@ class Player(Sprite):
         self.gravity = gravity
         self.velocity = velocity
 
-        self.cshape = AARectShape(self.position, self.width/3, self.height/2)
+        self.cshape = AARectShape(self.position, self.width//3, self.height//2)
 
         self.schedule(self.update)
 
