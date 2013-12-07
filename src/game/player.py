@@ -6,6 +6,7 @@ from cocos.sprite import Sprite
 
 from game.resources import resources
 
+
 class Player(Sprite):
     def __init__(
             self,
@@ -44,7 +45,7 @@ class Player(Sprite):
             self.velocity = (self.velocity[0], 0)
             self.jumping = False
         if self.position[0] < xmin:
-           self.position = (xmin, self.position[1])
+            self.position = (xmin, self.position[1])
         elif self.position[0] > xmax:
             self.position = (xmax, self.position[1])
         else:
