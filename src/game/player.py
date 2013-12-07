@@ -1,13 +1,12 @@
 from __future__ import division
 
-from cocos.actions import Move
-from pyglet.window import key
-import cocos
-import cocos.collision_model as cm
+from cocos.collision_model import AARectShape
+from cocos.director import director
+from cocos.sprite import Sprite
 
 from game.resources import resources
 
-class Player(cocos.sprite.Sprite):
+class Player(Sprite):
     def __init__(
             self,
             position=(25, 25),
@@ -26,14 +25,14 @@ class Player(cocos.sprite.Sprite):
         self.gravity = gravity
         self.velocity = velocity
 
-        self.cshape = cm.AARectShape(self.position, self.width/3, self.height/2)
+        self.cshape = AARectShape(self.position, self.width/3, self.height/2)
 
         self.schedule(self.update)
 
     def update(self, dt):
         self.cshape.center = self.position
 
-        win_width, win_height = cocos.director.director.get_window_size()
+        win_width, win_height = director.get_window_size()
 
         xmin = self.width//2
         xmax = win_width - xmin
