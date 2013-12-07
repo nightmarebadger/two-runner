@@ -31,7 +31,11 @@ class Game(cocos.layer.ColorLayer):
         self.add(self.obstacle, z = 1)
         self.obstacle.do(Move())
 
-        self.obstacle.cshape = cm.AARectShape(self.obstacle.position, self.obstacle.width/3, self.obstacle.height/2)
+        self.obstacle.cshape = cm.AARectShape(
+            self.obstacle.position,
+            self.obstacle.width/3,
+            self.obstacle.height/2
+        )
         self.collision_manager.add(self.obstacle)
 
         self.player.schedule(self.update)
@@ -42,7 +46,11 @@ class Game(cocos.layer.ColorLayer):
         if collisions:
             if self.obstacle in collisions:
                 scene = cocos.scene.Scene()
-                scene.add(cocos.layer.MultiplexLayer(YouLostMenu(), OptionsMenu()), z = 1)
+                scene.add(cocos.layer.MultiplexLayer(
+                    YouLostMenu(),
+                    OptionsMenu()),
+                    z = 1
+                )
                 scene.add(BackgroundLayer(), z = 0)
                 cocos.director.director.run(scene)
 
@@ -121,7 +129,9 @@ class OptionsMenu(cocos.menu.Menu):
         self.create_menu(items, cocos.menu.shake(), cocos.menu.shake_back())
 
     def on_fullscreen(self):
-        cocos.director.director.window.set_fullscreen(not cocos.director.director.window.fullscreen)
+        cocos.director.director.window.set_fullscreen(
+            not cocos.director.director.window.fullscreen
+        )
 
     def on_quit(self):
         self.parent.switch_to(0)
