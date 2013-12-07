@@ -33,13 +33,20 @@ class Player(cocos.sprite.Sprite):
     def update(self, dt):
         self.cshape.center = self.position
 
-        if self.position[1] <= 25:
-            self.position = (self.position[0], 25)
+        win_width, win_height = cocos.director.director.get_window_size()
+
+        xmin = self.width//2
+        xmax = win_width - xmin
+
+        ymin = self.height//2
+
+        if self.position[1] <= ymin:
+            self.position = (self.position[0], ymin)
             self.velocity = (self.velocity[0], 0)
             self.jumping = False
-        if self.position[0] < 25:
-           self.position = (25, self.position[1])
-        elif self.position[0] > 775:
-            self.position = (775, self.position[1])
+        if self.position[0] < xmin:
+           self.position = (xmin, self.position[1])
+        elif self.position[0] > xmax:
+            self.position = (xmax, self.position[1])
         else:
             pass
