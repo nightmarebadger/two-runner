@@ -1,9 +1,12 @@
 from __future__ import division
 
+from cocos.actions import Move
 from cocos.collision_model import AARectShape
 from cocos.director import director
 from cocos.sprite import Sprite
+from pyglet.window import key
 
+from game import utils
 from game.resources import resources
 
 
@@ -28,6 +31,9 @@ class Player(Sprite):
 
         self.cshape = AARectShape(self.position, self.width//3, self.height//2)
 
+        self.jumping = False
+        self.do(Move())
+
         self.schedule(self.update)
 
     def update(self, dt):
@@ -50,3 +56,20 @@ class Player(Sprite):
             self.position = (xmax, self.position[1])
         else:
             pass
+
+        self.handle_keys()
+
+    def handle_keys(self):
+        vel = [0, self.velocity[1]]
+
+        if utils.keys[key.LEFT]:
+            vel[0] -= self.speed//2
+        if utils.keys[key.RIGHT]:
+            vel[0] += self.speed//2
+
+        if utils.keys[key.UP]:
+            if not self.jumping:
+                vel[1] += self.speed
+                self.jumping = True
+
+        self.velocity = tuple(vel)

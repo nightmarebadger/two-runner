@@ -1,12 +1,12 @@
 from __future__ import division
 
 from cocos.actions import Move
-from pyglet.window import key
 import cocos
 import cocos.collision_model as cm
 import pyglet
 
 from game import player
+from game import utils
 from game.resources import resources
 
 
@@ -21,9 +21,6 @@ class Game(cocos.layer.ColorLayer):
         self.collision_manager = cm.CollisionManagerBruteForce()
 
         self.add(self.player, z=1)
-        self.player.do(Move())
-        self.player.jumping = False
-
         self.collision_manager.add(self.player)
 
         self.obstacle = cocos.sprite.Sprite(resources.obstacle)
@@ -40,7 +37,7 @@ class Game(cocos.layer.ColorLayer):
         )
         self.collision_manager.add(self.obstacle)
 
-        self.player.schedule(self.update)
+        self.schedule(self.update)
 
     def update(self, dt):
         self.obstacle.cshape.center = self.obstacle.position
@@ -58,30 +55,6 @@ class Game(cocos.layer.ColorLayer):
 
         if self.obstacle.position[0] < 0:
             self.obstacle.position = 830, 30
-
-    def on_key_press(self, symbol, modifiers):
-        vel = list(self.player.velocity)
-        if symbol == key.LEFT:
-            vel[0] -= self.player.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] += self.player.speed/2
-        elif symbol == key.UP:
-            if not self.player.jumping:
-                vel[1] += self.player.speed
-                self.player.jumping = True
-        elif symbol == key.DOWN:
-            vel[1] = -self.player.speed
-
-        self.player.velocity = tuple(vel)
-
-    def on_key_release(self, symbol, modifier):
-        vel = list(self.player.velocity)
-        if symbol == key.LEFT:
-            vel[0] += self.player.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] -= self.player.speed/2
-
-        self.player.velocity = vel
 
 
 class MainMenu(cocos.menu.Menu):
@@ -192,6 +165,7 @@ class YouLostMenu(cocos.menu.Menu):
 
 if __name__ == '__main__':
     cocos.director.director.init(width=800, height=500)
+    cocos.director.director.window.push_handlers(utils.keys)
     scene = cocos.scene.Scene()
     scene.add(cocos.layer.MultiplexLayer(MainMenu(), OptionsMenu()), z=1)
     scene.add(BackgroundLayer(), z=0)
